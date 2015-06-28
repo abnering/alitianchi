@@ -1,0 +1,29 @@
+# encoding:utf8
+import cPickle as pickle
+
+from random import random
+
+
+
+
+f3 = file("user_purchase_value.pkl",'rb')
+f4 = file("user_redeem_value.pkl",'rb')
+
+
+ret_purchase_value = pickle.load(f3)
+ret_purchase_value = pickle.load(f4)
+
+print len(ret_purchase_value)
+
+
+
+f3.close()
+f4.close()
+
+
+
+
+
+
+
+

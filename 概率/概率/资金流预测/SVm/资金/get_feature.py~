@@ -1,0 +1,118 @@
+#encoding:utf8
+import cPickle as pickle
+import numpy as np
+from sklearn.svm import SVR
+from sklearn.metrics import mean_squared_error
+from sklearn.linear_model  import LinearRegression
+
+
+f = file('total_purchase.txt','rb')
+r1 = pickle.load(f)
+r2 = pickle.load(f)
+f.close()
+
+
+i = 0
+purchase = []
+
+purchase = []
+for item in r1:
+    i += 1
+    print i
+    if i < 0:
+        continue
+    purchase.append(r1[i - 1][1])
+
+mu1 = np.mean(purchase[285:])
+st1 = np.std(purchase[285:])
+print mu1
+Y1 = (purchase - mu1)/st1
+
+
+
+traindata = []
+
+for i in range(len(Y1)):
+    if i < 285:
+        continue
+    purchase_Y = Y1[i]
+    X = [0 for k in range(11)]
+    for j in range(7):
+        X[j] = Y1[i - j - 1]
+    
+    for j in range(len(X) - 7):
+        X[7 + j] = Y1[i - j*7 - 14]
+
+    
+    
+
+    traindata.append((X,purchase_Y))
+
+print len(traindata)
+
+
+train_x = []
+train_y = []
+
+test_x = []
+test_y = []
+'''
+for i in range(len(traindata)):
+    if i % 10 == 0:
+        test_x.append(traindata[i][0])
+        test_y.append(traindata[i][1])
+    else:
+        train_x.append(traindata[i][0])
+        train_y.append(traindata[i][1])
+'''
+for i in range(len(traindata)):
+    if i > len(traindata) - 30:
+        test_x.append(traindata[i][0])
+        test_y.append(traindata[i][1])
+    else:
+        train_x.append(traindata[i][0])
+        train_y.append(traindata[i][1])
+
+train_x = np.mat(train_x)
+train_y = np.array(train_y)
+
+test_x = np.mat(test_x)
+test_y = np.array(test_y)
+
+para1 = [12 + i*0.0001 for i in range(40)]
+para2 = [0.001 + i*0.0001 for i in range(40)]
+c = 0
+g = 0
+score = float('-inf')
+for i in range(len(para1)):
+    for j in range(len(para2)):
+        #clf = SVR(C = para1[i],gamma = para2[j])
+	clf = LinearRegression()
+        clf.fit(train_x,train_y)
+        if score  < clf.score(test_x,test_y):
+            score = clf.score(test_x,test_y)
+            print score
+            c = para1[i]
+            g = para2[j]
+
+print c
+print g
+
+#model = SVR(C = c,gamma = g)
+clf.fit(train_x,train_y)
+y_pre = clf.predict(test_x)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

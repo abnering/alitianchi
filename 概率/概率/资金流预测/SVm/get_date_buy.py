@@ -1,0 +1,34 @@
+# -*- coding: utf-8 -*-
+import csv
+import cPickle as pickle
+from operator import itemgetter,attrgetter
+
+f = file('资金总量/total_purchase.txt','wb')
+csvfile = file('user_balance_table.csv','rb')
+reader = csv.reader(csvfile)
+reader.next()
+i = 0;
+ret = {}
+ret2 = {}
+j = 0
+for line in reader:
+    i = i+1;
+    if i%10000 == 0:
+        print i
+    [user_id,report_date,tBalance,yBalance,total_purchase_amt,direct_purchase_amt,purchase_bal_amt,purchase_bank_amt,total_redeem_amt,consume_amt,transfer_amt,tftobal_amt,tftocard_amt,share_amt,category1,category2,category3,category4] = line  
+    if report_date not in ret.keys():
+        ret[report_date] = 0
+        ret2[report_date] = 0
+    ret[report_date] +=  int(total_purchase_amt)
+    ret2[report_date] += int(total_redeem_amt) 
+
+ret_redeem = sorted(ret2.iteritems(),key = itemgetter(0));
+ret_purchase = sorted(ret.iteritems(),key = itemgetter(0));
+for key in ret_purchase:
+    print key 
+for key in ret_redeem:
+    print key
+
+pickle.dump(ret_purchase,f)
+pickle.dump(ret_redeem,f)
+f.close()

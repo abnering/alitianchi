@@ -1,0 +1,17 @@
+import cPickle as pickle
+import matplotlib.pyplot as plt
+
+f = file('user_redeem_day.pkl','rb')
+r = pickle.load(f)
+f.close()
+
+X = []
+Y = []
+
+i = 0
+for i in range(92):
+    X.append(i+151)
+    Y.append(r[i+151])
+plt.figure(0)
+plt.plot(X,Y)
+plt.show()
